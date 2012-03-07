@@ -1,0 +1,21 @@
+{
+  "author": "Gareth Jones <gareth.jones@sensis.com.au> (http://github.com/nomiddlename)",
+  "name": "flipper",
+  "description": "Feature Flipping for node.js",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nomiddlename/flipper.git"
+  },
+  "main": "lib/flipper.js",
+  "scripts": {
+    "test": "vows test/*.js"
+  },
+  "engines": {
+    "node": ">=0.4.7"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vows": "0.5.13"
+  }
+}

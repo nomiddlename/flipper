@@ -2,6 +2,8 @@
 
 [Feature flipping](http://code.flickr.com/blog/2009/12/02/flipping-out/) (also called [feature toggling](http://martinfowler.com/bliki/FeatureToggle.html)) is a technique used in Continuous Deployment to allow developers to work on new features without blocking releases to production. [99 Designs explain it well](http://99designs.com/tech-blog/blog/2012/03/01/feature-flipping/).
 
+There's also another implementation of [feature flipping for node.js](https://github.com/bigodines/feature-flipper-js). 
+
 ## API ##
 ### Defining a feature ###
     var flipper = require('flipper');
@@ -16,16 +18,13 @@
     }
     /* alternatively */
     flipper.isEnabled('mutatedDolphins')
-    flipper.mutatedDolphins.isEnabled()
   
 ### Enabling a feature ###
     flipper.mutatedDolphins = true;
-    flipper.mutatedDolphins.enable();
     flipper.enable('mutatedDolphins');
 
 ### Disabling a feature ###
     flipper.mutatedDolphins = false;
-    flipper.mutatedDolphins.disable();
     flipper.disable('mutatedDolphins');
   
 ### Finding out all current features ###
