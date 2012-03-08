@@ -2,12 +2,6 @@ var vows = require('vows'),
     assert = require('assert'),
     flipper = require('../lib/flipper');
 
-function hasProperty(property, value) {
-    return function(item) {
-        return value ? item[property] === value : item.hasOwnProperty(property);
-    };
-}
-
 vows.describe('Flipper Javascript API').addBatch({
     'adding a feature': {
         topic: function() {
@@ -15,11 +9,23 @@ vows.describe('Flipper Javascript API').addBatch({
             return flipper;
         },
         'should appear in the list of features': function(lib) {
-            assert.deepInclude(lib.features(), { name: "testFeature", status: "disabled" });
+            assert.isTrue(lib.allFeatures().hasOwnProperty("testFeature"));
         },
         'should default to disabled': function(lib) {
             assert.isFalse(lib.testFeature);
             assert.isFalse(lib.isEnabled('testFeature'));
+        }
+    },
+    'testing if a feature exists': {
+        topic: function() {
+            flipper.add('itDoesExist');
+            return flipper;
+        },
+        'should return true for an existing feature': function(lib) {
+            assert.isTrue(lib.exists('itDoesExist'));
+        },
+        'should return false for a non-existent feature': function(lib) {
+            assert.isFalse(lib.exists('itDoesNotExist'));
         }
     },
     'enabling a feature': {
@@ -31,7 +37,7 @@ vows.describe('Flipper Javascript API').addBatch({
         'should change the status': function(lib) {
             assert.isTrue(lib.featureToEnable);
             assert.isTrue(lib.isEnabled('featureToEnable'));
-            assert.deepInclude(lib.features(), { name: 'featureToEnable', status: 'enabled' });
+            assert.isTrue(lib.allFeatures()['featureToEnable']);
         },
         'then disabling the feature': {
             'by setting the property to false': {
@@ -42,7 +48,7 @@ vows.describe('Flipper Javascript API').addBatch({
                 'should change the status': function(lib) {
                     assert.isFalse(lib.featureToEnable);
                     assert.isFalse(lib.isEnabled('featureToEnable'));
-                    assert.deepInclude(lib.features(), { name: 'featureToEnable', status: 'disabled' });
+                    assert.isFalse(lib.allFeatures()['featureToEnable']);
                 }
             },
             'by calling disable': {
@@ -56,7 +62,7 @@ vows.describe('Flipper Javascript API').addBatch({
                 'should change the status': function(lib) {
                     assert.isFalse(lib.featureToDisable);
                     assert.isFalse(lib.isEnabled('featureToDisable'));
-                    assert.deepInclude(lib.features(), { name: 'featureToDisable', status: 'disabled' });
+                    assert.isFalse(lib.allFeatures()['featureToDisable']);
                 }
             }
         }
@@ -64,12 +70,13 @@ vows.describe('Flipper Javascript API').addBatch({
     },
     'adding a feature twice': {
         topic: function() {
-            flipper.add("testFeature");
-            flipper.add("testFeature");
+            flipper.add("featureAddedTwice");
+            flipper.enable('featureAddedTwice');
+            flipper.add("featureAddedTwice");
             return flipper;
         },
-        'should only add it to the list once': function(lib) {
-            assert.lengthOf(lib.features().filter(hasProperty("name", "testFeature")), 1);
+        'should not change the status': function(lib) {
+            assert.isTrue(flipper.featureAddedTwice);
         }
     }
 }).exportTo(module);

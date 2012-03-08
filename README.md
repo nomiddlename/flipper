@@ -33,10 +33,10 @@ There's also another implementation of [feature flipping for node.js](https://gi
 ## Connect middleware ##
 If you make use of the [connect](http://www.senchalabs.org/connect/) middleware:
 
-    var app = connect().use(flipper.http({base: '/flipper'})).listen(3000);
+    var app = connect().use(flipper.http('/flipper')).listen(3000);
 You can flip and inspect features via HTTP:
 
-    curl http://localhost:3000/flipper/ # return list of all features with status (enabled/disabled)
+    curl http://localhost:3000/flipper/ # returns all features with status (enabled/disabled)
     curl http://localhost:3000/flipper/mutatedDolphins # returns status (enabled/disabled)
     curl -X PUT http://localhost:3000/flipper/mutatedDolphins --data-binary enable #enables the feature
     curl -X PUT http://localhost:3000/flipper/mutatedDolphins --data-binary disable
