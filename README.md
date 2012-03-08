@@ -1,4 +1,5 @@
 # Flipper - feature flipping for node.js #
+[![Build Status](https://secure.travis-ci.org/nomiddlename/flipper.png?branch=master)](http://travis-ci.org/nomiddlename/flipper)
 
 [Feature flipping](http://code.flickr.com/blog/2009/12/02/flipping-out/) (also called [feature toggling](http://martinfowler.com/bliki/FeatureToggle.html)) is a technique used in Continuous Deployment to allow developers to work on new features without blocking releases to production. [99 Designs explain it well](http://99designs.com/tech-blog/blog/2012/03/01/feature-flipping/).
 
