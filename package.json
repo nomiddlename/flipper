@@ -17,5 +17,6 @@
   "dependencies": {},
   "devDependencies": {
     "vows": "0.5.13"
+    "sandboxed-module": "0.1.3"
   }
 }
