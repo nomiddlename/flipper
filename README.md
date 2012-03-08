@@ -5,6 +5,10 @@
 
 There's also another implementation of [feature flipping for node.js](https://github.com/bigodines/feature-flipper-js). 
 
+## Installation ##
+    npm install flipper
+
+
 ## API ##
 ### Defining a feature ###
     var flipper = require('flipper');
