@@ -28,7 +28,7 @@ There's also another implementation of [feature flipping for node.js](https://gi
     flipper.disable('mutatedDolphins');
   
 ### Finding out all current features ###
-    flipper.features() /* returns array of { name: "feature name", status: "enabled|disabled" } */
+    flipper.allFeatures() /* returns array of { "feature name": status } */
 
 ## Connect middleware ##
 If you make use of the [connect](http://www.senchalabs.org/connect/) middleware:
@@ -36,10 +36,10 @@ If you make use of the [connect](http://www.senchalabs.org/connect/) middleware:
     var app = connect().use(flipper.http('/flipper')).listen(3000);
 You can flip and inspect features via HTTP:
 
-    curl http://localhost:3000/flipper/ # returns all features with status (enabled/disabled)
-    curl http://localhost:3000/flipper/mutatedDolphins # returns status (enabled/disabled)
-    curl -X PUT http://localhost:3000/flipper/mutatedDolphins --data-binary enable #enables the feature
-    curl -X PUT http://localhost:3000/flipper/mutatedDolphins --data-binary disable
+    curl http://localhost:3000/flipper/ # returns all features with status (true/false)
+    curl http://localhost:3000/flipper/mutatedDolphins # returns status (true/false)
+    curl -X PUT http://localhost:3000/flipper/mutatedDolphins --data-binary true #enables the feature
+    curl -X PUT http://localhost:3000/flipper/mutatedDolphins --data-binary false
 
 ## Persistence ##
 To survive application restarts, flipper can write a configuration file whenever a feature is added, enabled, or disabled. To enable this, call the persist function:
