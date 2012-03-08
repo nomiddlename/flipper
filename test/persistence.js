@@ -1,16 +1,22 @@
 var vows = require('vows'),
     assert = require('assert'),
-    sandbox = require('sandboxed-module');
+    sandbox = require('sandboxed-module'),
+    mockConsole = {
+        messages: [],
+        error: function() {
+            this.messages.push(Array.prototype.slice.call(arguments));
+        }
+    };
 
 function mockFS(existingFileContents, writeError) {
     return {
-        readFile: function(filename, encoding, callback) {
+        readFileSync: function(filename, encoding) {
             this.readFilename = filename;
             this.readEncoding = encoding;
             if (existingFileContents) {
-                callback(null, JSON.stringify(existingFileContents));
+                return JSON.stringify(existingFileContents);
             } else {
-                callback(new Error('no such file or directory'));
+                throw new Error('no such file or directory');
             }
         },
         writeFile: function(filename, data, encoding, callback) {
@@ -26,7 +32,7 @@ vows.describe('Flipper file persistence').addBatch({
     'with no existing file and no features': {
         topic: function() {
             var fs = mockFS(),
-            flipper = sandbox.require('../lib/flipper', { requires: { fs: fs } });
+                flipper = sandbox.require('../lib/flipper', { requires: { fs: fs}, globals: { console: mockConsole } });
 
             flipper.persist('path/to/cheese.json');
             return fs;
@@ -40,7 +46,7 @@ vows.describe('Flipper file persistence').addBatch({
         },
         'when a feature is added': {
             topic: function() {
-                var fs = mockFS(), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs } });
+                var fs = mockFS(), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole } });
                 flipper.persist('path/to/cheese.json');
                 flipper.add("cheeseballs");
                 return fs;
@@ -53,7 +59,7 @@ vows.describe('Flipper file persistence').addBatch({
         },
         'when a feature is enabled': {
             topic: function() {
-                var fs = mockFS(), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs } });
+                var fs = mockFS(), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole } });
                 flipper.persist('path/to/cheese.json');
                 flipper.add("cheeseballs");
                 flipper.enable("cheeseballs");
@@ -67,7 +73,7 @@ vows.describe('Flipper file persistence').addBatch({
         },
         'when a feature is disabled': {
             topic: function() {
-                var fs = mockFS(), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs } });
+                var fs = mockFS(), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole } });
                 flipper.persist('path/to/cheese.json');
                 flipper.add("cheeseballs");
                 flipper.enable("cheeseballs");
@@ -82,7 +88,7 @@ vows.describe('Flipper file persistence').addBatch({
         },
         'when there is a write error': {
             topic: function() {
-                var fs = mockFS(null, new Error("File is read-only")), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }});
+                var fs = mockFS(null, new Error("File is read-only")), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole }});
                 flipper.persist('path/to/cheese.json');
                 return fs;
             },
@@ -94,7 +100,7 @@ vows.describe('Flipper file persistence').addBatch({
     },
     'with an existing file': {
         topic: function() {
-            var fs = mockFS({ cheeseballs: true }), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs } });
+            var fs = mockFS({ cheeseballs: true }), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole } });
             flipper.persist('path/to/cheese.json');
             return flipper;
         },
@@ -105,7 +111,7 @@ vows.describe('Flipper file persistence').addBatch({
     },
     'with an existing file and existing features': {
         topic: function() {
-            var fs = mockFS({ cheeseballs: true }), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs } });
+            var fs = mockFS({ cheeseballs: true }), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole } });
             flipper.add("baconballs");
             flipper.add("cheeseballs");
             flipper.persist('path/to/cheese.json');
