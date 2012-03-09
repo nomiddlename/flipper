@@ -80,8 +80,8 @@ vows.describe('Flipper HTTP (connect) interface').addBatch({
                     assert.equal(response.statusCode, 200);
                 },
                 'response should include status of the features': function(response) {
-                    assert.equal(JSON.parse(response.data)['testFeature'], flipper.testFeature);
-                    assert.equal(JSON.parse(response.data)['mutatedDolphins'], flipper.mutatedDolphins);
+                    assert.equal(JSON.parse(response.data).testFeature, flipper.testFeature);
+                    assert.equal(JSON.parse(response.data).mutatedDolphins, flipper.mutatedDolphins);
                 }
             },
             'when a GET request for a feature is made': {

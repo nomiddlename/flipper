@@ -37,7 +37,7 @@ vows.describe('Flipper Javascript API').addBatch({
         'should change the status': function(lib) {
             assert.isTrue(lib.featureToEnable);
             assert.isTrue(lib.isEnabled('featureToEnable'));
-            assert.isTrue(lib.allFeatures()['featureToEnable']);
+            assert.isTrue(lib.allFeatures().featureToEnable);
         },
         'then disabling the feature': {
             'by setting the property to false': {
@@ -48,7 +48,7 @@ vows.describe('Flipper Javascript API').addBatch({
                 'should change the status': function(lib) {
                     assert.isFalse(lib.featureToEnable);
                     assert.isFalse(lib.isEnabled('featureToEnable'));
-                    assert.isFalse(lib.allFeatures()['featureToEnable']);
+                    assert.isFalse(lib.allFeatures().featureToEnable);
                 }
             },
             'by calling disable': {
@@ -56,13 +56,13 @@ vows.describe('Flipper Javascript API').addBatch({
                     lib.add("featureToDisable");
                     lib.enable("featureToDisable");
                     assert.isTrue(lib.featureToDisable);
-                    lib.disable("featureToDisable")
+                    lib.disable("featureToDisable");
                     return lib;
                 },
                 'should change the status': function(lib) {
                     assert.isFalse(lib.featureToDisable);
                     assert.isFalse(lib.isEnabled('featureToDisable'));
-                    assert.isFalse(lib.allFeatures()['featureToDisable']);
+                    assert.isFalse(lib.allFeatures().featureToDisable);
                 }
             }
         }
