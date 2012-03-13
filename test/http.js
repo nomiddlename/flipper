@@ -2,10 +2,11 @@ var vows = require('vows'),
     assert = require('assert'),
     flipper = require('../lib/flipper');
 
-function request(method, url, body) {
+function request(method, url, body, bodyParserBody) {
     return {
         method: method,
         url: url,
+        body: bodyParserBody,
         setEncoding: function(encoding) {
             assert.equal(encoding, 'utf8');
         },
@@ -29,6 +30,12 @@ function mockResponse() {
             this.data = data;
         }
     };
+}
+
+function mockNext() {
+    return function() {
+        this.called = true;
+    }
 }
 
 function responseOf(contentType, status, body) {
@@ -99,16 +106,14 @@ vows.describe('Flipper HTTP (connect) interface').addBatch({
                     http(request('GET', '/baseurl/this-feature-does-not-exist'), response);
                     return response;
                 },
-                'response should have a status code of 404 Not Found': function(response) {
-                    assert.equal(response.statusCode, 404);
-                }
+                'response should be': responseOf('application/json', 404)
             },
             'when a PUT request for a feature is made': {
                 topic: function(http) {
                     var response = mockResponse();
                     flipper.add('disturbedChickens');
                     flipper.disable('disturbedChickens');
-                    http(request('PUT', '/baseurl/disturbedChickens', 'true'), response);
+                    http(request('PUT', '/baseurl/disturbedChickens', 'true'), response, mockNext());
                     return response;
                 },
                 'response should be': responseOf('application/json', 200, 'true'),
@@ -151,6 +156,31 @@ vows.describe('Flipper HTTP (connect) interface').addBatch({
                 'response should be': responseOf('application/json', 400),
                 'feature should not have been added': function() {
                     assert.isFalse(flipper.exists('baconballs'));
+                }
+            },
+            'when a PUT request to the baseurl is made': {
+                topic: function(http) {
+                    var response = mockResponse();
+                    http(request('PUT', '/baseurl', 'true'), response);
+                    return response;
+                },
+                'response should be': responseOf('application/json', 404),
+                'feature should not have been added': function() {
+                    assert.isFalse(flipper.exists(''));
+                }
+            },
+            'with connect.bodyParser in the stack': {
+                'when a PUT request is made': {
+                    topic: function(http) {
+                        var response = mockResponse();
+                        http(request('PUT', '/baseurl/elbows', undefined, 'true'), response);
+                        return response;
+                    },
+                    'response should be': responseOf('application/json', 201),
+                    'feature should have been added': function() {
+                        assert.isTrue(flipper.exists('elbows'));
+                        assert.isTrue(flipper.elbows);
+                    }
                 }
             }
         }
