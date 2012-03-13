@@ -24,6 +24,11 @@ function mockFS(existingFileContents, writeError) {
             this.data = data;
             this.encoding = encoding;
             callback(writeError);
+        },
+        watchFile: function(filename, options, callback) {
+            this.watchedFile = filename;
+            this.watchOptions = options;
+            this.watchCallback = callback;
         }
     };
 }
@@ -43,6 +48,10 @@ vows.describe('Flipper file persistence').addBatch({
         },
         'should not write to the file': function(fs) {
             assert.isUndefined(fs.filename);
+        },
+        'should start listening for changes to the file': function(fs) {
+            assert.equal(fs.watchedFile, 'path/to/cheese.json');
+            assert.equal(fs.watchOptions.persistent, false);
         },
         'when a feature is added': {
             topic: function() {
@@ -107,6 +116,30 @@ vows.describe('Flipper file persistence').addBatch({
         'should get features from file': function(flipper) {
             assert.isTrue(flipper.exists('cheeseballs'));
             assert.isTrue(flipper.cheeseballs);
+        },
+        'when the file is updated': {
+            topic: function() {
+                var fs = mockFS({ cheeseballs: false }), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole } });
+                flipper.persist('path/to/cheese.json');
+                flipper.enable('cheeseballs');
+                fs.watchCallback({ mtime: 5 }, { mtime: 1 });
+                return flipper;
+            },
+            'should reload the features': function(flipper) {
+                assert.isFalse(flipper.cheeseballs);
+            }
+        },
+        'when the file is accessed but not updated': {
+            topic: function() {
+                var fs = mockFS({ cheeseballs: false }), flipper = sandbox.require('../lib/flipper', { requires: { fs: fs }, globals: { console: mockConsole } });
+                flipper.persist('path/to/cheese.json');
+                flipper.enable('cheeseballs');
+                fs.watchCallback({ mtime: 5 }, { mtime: 5 });
+                return flipper;
+            },
+            'should not reload the features': function(flipper) {
+                assert.isTrue(flipper.cheeseballs);
+            }
         }
     },
     'with an existing file and existing features': {
