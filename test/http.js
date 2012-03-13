@@ -35,7 +35,7 @@ function mockResponse() {
 function mockNext() {
     return function() {
         this.called = true;
-    }
+    };
 }
 
 function responseOf(contentType, status, body) {
