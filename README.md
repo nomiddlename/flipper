@@ -6,7 +6,7 @@
 There's also another implementation of [feature flipping for node.js](https://github.com/bigodines/feature-flipper-js). 
 
 ## Installation ##
-~~ npm install flipper ~~
+~~npm install flipper~~
 Sorry, flipper is no longer available on NPM. I've handed over the NPM package to [Facebook](https://fbflipper.com) for their project, on the grounds that the 7 people who download this library per week are probably doing so by accident. You can still use it in your projects if you want to by replacing the package name with the github url. Check the npm package.json docs for details on how.
 
 ## API ##
